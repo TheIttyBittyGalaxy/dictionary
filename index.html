@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚</title>
+
+    <style>
+        /* Resets */
+        input,
+        select,
+        textarea,
+        ol,
+        ul {
+            margin: 0;
+            padding: 0;
+            border: none;
+            outline: none;
+            background: none;
+            font-family: inherit;
+            font-size: inherit;
+            font-style: inherit;
+            line-height: inherit;
+            color: inherit;
+        }
+
+        textarea {
+            resize: none;
+            width: 100%;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        select {
+            -webkit-appearance: none;
+            /* Chrome, Safari, Edge */
+            -moz-appearance: none;
+            /* Firefox */
+            appearance: none;
+            /* Standard */
+        }
+
+        /* Basics */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        :root {
+            font-size: 24px;
+        }
+
+        body {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input,
+        select,
+        textarea {
+            display: block;
+            border-radius: 4px;
+            background: #0000;
+            transition: background-color .2s;
+            padding: 4px;
+        }
+
+        input:hover,
+        input:focus,
+        select:hover,
+        select:focus,
+        textarea:hover,
+        textarea:focus {
+            background: #00000008;
+        }
+
+        .line {
+            border-bottom: 1px solid black;
+        }
+
+        /* Definition */
+        .definition {
+            width: 100%;
+            max-width: 500px;
+            padding: 3rem;
+            background-color: white;
+        }
+
+        .definition-word {
+            display: block;
+            font-weight: bold;
+            font-size: 2rem;
+        }
+
+        .definition-sub {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .definition-phonetic {
+            flex-shrink: 0;
+            flex-grow: 0;
+        }
+
+        .definition-phonetic::before {
+            content: "[/";
+        }
+
+        .definition-phonetic::after {
+            content: "/]";
+        }
+
+        .definition-part-of-speech {
+            width: fit-content;
+            font-style: italic;
+        }
+
+        .definition-list {
+            list-style-position: outside;
+            margin-left: 1rem;
+        }
+
+        .definition-example {
+            font-style: italic;
+        }
+
+        .definition-word,
+        .definition-sub,
+        .definition-point,
+        .definition-example {
+            margin: .2rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="definition">
+        <span class="definition-word">
+            <textarea placeholder="word"></textarea>
+        </span>
+        <span class="definition-sub">
+            <span class="definition-phonetic"></span>
+            <select name="kind" class="definition-part-of-speech">
+                <option value="noun">noun</option>
+                <option value="verb">verb</option>
+                <option value="adjective">adjective</option>
+                <option value="adverb">adverb</option>
+                <option value="pronoun">pronoun</option>
+                <option value="conjunction">conjunction</option>
+                <option value="preposition">preposition</option>
+                <option value="interjection">interjection</option>
+            </select>
+        </span>
+        <div class="line"></div>
+        <ol class="definition-list">
+            <li class="definition-point">
+                <textarea placeholder="definition"></textarea>
+            </li>
+        </ol>
+        <span class="definition-example">
+            <textarea placeholder="use it in a sentence"></textarea>
+        </span>
+    </div>
+</body>
+
+<script>
+    function updateTextAreaHeight(textarea) {
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+
+    function updateTextAreaExistence(textarea) {
+        const parent = textarea.parentElement;
+        const points = document.querySelectorAll(".definition-point");
+        if (textarea.value === "" && points.length > 1) {
+            const index = Array.from(points).indexOf(parent);
+            parent.remove();
+            const next = (index == 0) ?
+                points[1].querySelector("textarea") :
+                points[index - 1].querySelector("textarea");
+            next.focus();
+            next.selectionStart = next.value.length;
+            next.selectionEnd = next.value.length;
+            return true;
+        }
+        return false;
+    }
+
+    function focusNextTextArea(textarea) {
+        const parent = textarea.parentElement;
+
+        if (parent.classList.contains("definition-word")) {
+            document.querySelector(".definition-point textarea").focus();
+
+        } else if (textarea.classList.contains("definition-part-of-speech")) {
+            document.querySelector(".definition-point textarea").focus();
+
+        } else if (parent.classList.contains("definition-point")) {
+            const next = parent.nextElementSibling;
+            if (next) {
+                next.querySelector("textarea").focus();
+            } else if (textarea.value !== "") {
+                const li = document.createElement("li");
+                li.classList.add("definition-point");
+                const ta = document.createElement("textarea");
+                ta.rows = 1;
+                ta.placeholder = "definition";
+
+                li.appendChild(ta);
+                document.querySelector(".definition-list").appendChild(li);
+                ta.focus();
+            }
+
+        } else {
+            document.activeElement.blur();
+        }
+    }
+
+    function fakePhonetic(word) {
+        const transcription = {
+            a: "ə",
+            b: "b",
+            c: "k",
+            d: "d",
+            e: "ɛ",
+            f: "f",
+            g: "g",
+            h: "h",
+            i: "i",
+            j: "ʤ",
+            k: "k",
+            l: "l",
+            m: "m",
+            n: "n",
+            o: "oʊ",
+            p: "p",
+            q: "kw",
+            r: "ɹ",
+            s: "s",
+            t: "t",
+            u: "ʊ",
+            v: "v",
+            w: "w",
+            x: "ks",
+            y: "j",
+            z: "z",
+        };
+
+        return word.toLowerCase()
+            .split("")
+            .map(char => transcription[char] || "")
+            .join("");
+    }
+
+    document.addEventListener("input", event => {
+        const target = event.target;
+
+        if (target.tagName.toLowerCase() === "textarea") {
+            updateTextAreaHeight(target);
+        }
+    });
+
+    document.addEventListener("keydown", event => {
+        const target = event.target;
+        const parent = event.target.parentElement;
+
+        if (target.tagName.toLowerCase() === "textarea") {
+            if (event.key === "Backspace") {
+                const taChanged = updateTextAreaExistence(target);
+                if (taChanged)
+                    event.preventDefault();
+            }
+
+            else if (event.key === "Enter") {
+                event.preventDefault();
+                focusNextTextArea(target);
+            }
+        }
+    });
+
+    window.addEventListener("load", event => {
+        for (const textarea of document.querySelectorAll("textarea")) {
+            textarea.rows = 1;
+            updateTextAreaHeight(textarea);
+        }
+
+        const phonetic = document.querySelector(".definition-phonetic");
+        document.querySelector(".definition-word").addEventListener("input", event => {
+            phonetic.innerHTML = fakePhonetic(event.target.value);
+        });
+    });
+</script>
+
+</html>
