@@ -294,8 +294,10 @@
         }
 
         const phonetic = document.querySelector(".definition-phonetic");
+        const title = document.querySelector("title");
         document.querySelector(".definition-word").addEventListener("input", event => {
             phonetic.innerHTML = fakePhonetic(event.target.value);
+            title.innerText = "📚 " + event.target.value;
         });
     });
 </script>
