@@ -145,7 +145,7 @@
 <body>
     <div class="definition">
         <span class="definition-word">
-            <textarea placeholder="word"></textarea>
+            <textarea placeholder="word" value=""></textarea>
         </span>
         <span class="definition-sub">
             <span class="definition-phonetic"></span>
@@ -163,11 +163,11 @@
         <div class="line"></div>
         <ol class="definition-list">
             <li class="definition-point">
-                <textarea placeholder="definition"></textarea>
+                <textarea placeholder="definition" value=""></textarea>
             </li>
         </ol>
         <span class="definition-example">
-            <textarea placeholder="use it in a sentence"></textarea>
+            <textarea placeholder="use it in a sentence" value=""></textarea>
         </span>
     </div>
 </body>
@@ -291,6 +291,7 @@
     window.addEventListener("load", event => {
         for (const textarea of document.querySelectorAll("textarea")) {
             textarea.rows = 1;
+            textarea.value = "";
             updateTextAreaHeight(textarea);
         }
 
